@@ -172,7 +172,10 @@ public class WinScreen implements Screen {
         mainTable.row();
 
         // Multiplier achieved
-        String multiplierText = String.format("Multiplier: %.1fx", multiplier);
+        // GWT doesn't support String.format, so we format manually
+        int wholePart = (int) multiplier;
+        int decimalPart = (int) ((multiplier - wholePart) * 10);
+        String multiplierText = "Multiplier: " + wholePart + "." + decimalPart + "x";
         multiplierLabel = new Label(multiplierText, labelStyle);
         if (multiplier > 1.0f) {
             multiplierLabel.setColor(new Color(0f, 1f, 1f, 1f)); // Cyan

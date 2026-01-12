@@ -157,7 +157,10 @@ public class BetScorer extends BaseScorer implements BinSerializable {
 
         // Draw multiplier indicator
         if (currentMultiplier > 1.0f) {
-            highScoreLabel.setText(String.format("%.1fx", currentMultiplier));
+            // GWT doesn't support String.format, so we format manually
+            int wholePart = (int) currentMultiplier;
+            int decimalPart = (int) ((currentMultiplier - wholePart) * 10);
+            highScoreLabel.setText(wholePart + "." + decimalPart + "x");
             highScoreLabel.setColor(glowColor);
         }
     }
