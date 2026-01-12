@@ -1,0 +1,26 @@
+{
+    "name": "Vegas Neon",
+    "price": 100,
+    "colors": {
+        "background": "1a0a2eff",
+        "foreground": "ffffffff",
+        "buttons": [
+            "ff1493ff",
+            "ffd700ff",
+            "00ff00ff",
+            "00bfffff"
+        ],
+        "empty_cell": "2a1a3eff",
+        "cells": [
+            "ff1493ff", "ff6b6bff", "ffa500ff",
+            "ffd700ff", "00ff00ff", "00bfffff",
+            "9400d3ff", "ff00ffff", "00ffffff"
+        ],
+        "current_score": "ffd700ff",
+        "high_score": "00ff00ff",
+        "bonus": "ff1493ff",
+        "band": "4a2a6eff",
+        "text": "ffffffff"
+    },
+    "cell_texture": "basic.png"
+}

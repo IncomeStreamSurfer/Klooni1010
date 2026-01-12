@@ -39,6 +39,7 @@ import dev.lonami.klooni.game.Piece;
 import dev.lonami.klooni.game.PieceHolder;
 import dev.lonami.klooni.game.Scorer;
 import dev.lonami.klooni.game.TimeScorer;
+import dev.lonami.klooni.game.BetScorer;
 import dev.lonami.klooni.serializer.BinSerializable;
 import dev.lonami.klooni.serializer.BinSerializer;
 
@@ -78,10 +79,14 @@ class GameScreen implements Screen, InputProcessor, BinSerializable {
     private final static int BOARD_SIZE = 10;
     private final static int HOLDER_PIECE_COUNT = 3;
 
-    final static int GAME_MODE_SCORE = 0;
-    final static int GAME_MODE_TIME = 1;
+    final static int GAME_MODE_SCORE = Klooni.GAME_MODE_SCORE;
+    final static int GAME_MODE_TIME = Klooni.GAME_MODE_TIME;
+    final static int GAME_MODE_CASINO = Klooni.GAME_MODE_CASINO;
 
     private final static String SAVE_DAT_FILENAME = ".klooni.sav";
+
+    // Casino mode specific
+    private int casinoBetAmount;
 
     //endregion
 
@@ -89,13 +94,19 @@ class GameScreen implements Screen, InputProcessor, BinSerializable {
 
     // Load any previously saved file by default
     GameScreen(final Klooni game, final int gameMode) {
-        this(game, gameMode, true);
+        this(game, gameMode, true, 0);
     }
 
     GameScreen(final Klooni game, final int gameMode, final boolean loadSave) {
+        this(game, gameMode, loadSave, 0);
+    }
+
+    // Constructor with bet amount for casino mode
+    GameScreen(final Klooni game, final int gameMode, final boolean loadSave, final int betAmount) {
         batch = new SpriteBatch();
         this.game = game;
         this.gameMode = gameMode;
+        this.casinoBetAmount = betAmount;
 
         final GameLayout layout = new GameLayout();
         switch (gameMode) {
@@ -104,6 +115,9 @@ class GameScreen implements Screen, InputProcessor, BinSerializable {
                 break;
             case GAME_MODE_TIME:
                 scorer = new TimeScorer(game, layout);
+                break;
+            case GAME_MODE_CASINO:
+                scorer = new BetScorer(game, layout, betAmount);
                 break;
             default:
                 throw new RuntimeException("Unknown game mode given: " + gameMode);
@@ -145,6 +159,21 @@ class GameScreen implements Screen, InputProcessor, BinSerializable {
     private void doGameOver(final String gameOverReason) {
         if (!gameOverDone) {
             gameOverDone = true;
+
+            // Handle casino mode differently - transition to WinScreen
+            if (gameMode == GAME_MODE_CASINO) {
+                BetScorer betScorer = (BetScorer) scorer;
+                holder.enabled = false;
+                if (Klooni.soundsEnabled())
+                    gameOverSound.play();
+                game.transitionTo(new WinScreen(
+                    game,
+                    betScorer.getCurrentScore(),
+                    betScorer.getBetAmount(),
+                    betScorer.getCurrentMultiplier()
+                ));
+                return;
+            }
 
             saveMoney();
             holder.enabled = false;

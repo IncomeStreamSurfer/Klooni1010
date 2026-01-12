@@ -68,6 +68,18 @@ public class Klooni extends Game {
     public static final int GAME_HEIGHT = 680;
     public static final int GAME_WIDTH = 408;
 
+    // Casino mode constants
+    public static final int GAME_MODE_SCORE = 0;
+    public static final int GAME_MODE_TIME = 1;
+    public static final int GAME_MODE_CASINO = 2;
+
+    // Bet amounts available
+    public static final int[] BET_AMOUNTS = {10, 25, 50, 100, 250, 500};
+
+    // Multiplier tiers (score thresholds and their multipliers)
+    public static final int[] MULTIPLIER_THRESHOLDS = {100, 200, 300, 500, 1000};
+    public static final float[] MULTIPLIERS = {1.5f, 2.0f, 3.0f, 5.0f, 10.0f};
+
     //endregion
 
     //region Creation
@@ -286,6 +298,48 @@ public class Klooni extends Game {
 
     private static float getRealMoney() {
         return prefs.getFloat("money");
+    }
+
+    // Casino betting methods
+    public static boolean canAffordBet(int betAmount) {
+        return getMoney() >= betAmount;
+    }
+
+    public static boolean placeBet(int betAmount) {
+        if (canAffordBet(betAmount)) {
+            setMoney(getRealMoney() - betAmount);
+            return true;
+        }
+        return false;
+    }
+
+    public static void addWinnings(int winnings) {
+        setMoney(getRealMoney() + winnings);
+    }
+
+    // Get the current multiplier tier for a given score
+    public static int getMultiplierTier(int score) {
+        for (int i = MULTIPLIER_THRESHOLDS.length - 1; i >= 0; i--) {
+            if (score >= MULTIPLIER_THRESHOLDS[i]) {
+                return i;
+            }
+        }
+        return -1; // No multiplier yet
+    }
+
+    // Get the multiplier value for a given tier
+    public static float getMultiplierForTier(int tier) {
+        if (tier >= 0 && tier < MULTIPLIERS.length) {
+            return MULTIPLIERS[tier];
+        }
+        return 1.0f; // Base multiplier
+    }
+
+    // Calculate winnings for a bet and score
+    public static int calculateWinnings(int betAmount, int score) {
+        int tier = getMultiplierTier(score);
+        float multiplier = getMultiplierForTier(tier);
+        return (int)(betAmount * multiplier);
     }
 
     //endregion

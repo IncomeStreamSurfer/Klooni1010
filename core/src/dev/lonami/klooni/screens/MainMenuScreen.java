@@ -64,10 +64,10 @@ public class MainMenuScreen extends InputListener implements Screen {
         playButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 MainMenuScreen.this.game.transitionTo(
-                        new GameScreen(MainMenuScreen.this.game, GameScreen.GAME_MODE_SCORE));
+                        new GameScreen(MainMenuScreen.this.game, Klooni.GAME_MODE_SCORE));
             }
         });
-        table.add(playButton).colspan(3).fill().space(16);
+        table.add(playButton).colspan(4).fill().space(16);
 
         table.row();
 
@@ -87,7 +87,7 @@ public class MainMenuScreen extends InputListener implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 MainMenuScreen.this.game.transitionTo(
-                        new GameScreen(MainMenuScreen.this.game, GameScreen.GAME_MODE_TIME));
+                        new GameScreen(MainMenuScreen.this.game, Klooni.GAME_MODE_TIME));
             }
         });
         table.add(statsButton).space(16);
@@ -102,6 +102,16 @@ public class MainMenuScreen extends InputListener implements Screen {
             }
         });
         table.add(paletteButton).space(16);
+
+        // Casino mode button
+        final SoftButton casinoButton = new SoftButton(1, "star_texture");
+        casinoButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                MainMenuScreen.this.game.transitionTo(new BetScreen(MainMenuScreen.this.game));
+            }
+        });
+        table.add(casinoButton).space(16);
     }
 
     //endregion
